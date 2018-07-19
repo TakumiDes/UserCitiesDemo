@@ -13,7 +13,7 @@ namespace CitiesUsersApi.DataProvider
     {
         private readonly CitiesUsersContext _citiesUsersContext = new CitiesUsersContext();
 
-        public async Task AddUser(UserRequestDto user)
+        public async Task<int> AddUser(UserRequestDto user)
         {
             using (var context = new CitiesUsersContext())
             {
@@ -28,18 +28,23 @@ namespace CitiesUsersApi.DataProvider
 
                 await context.SaveChangesAsync();
 
-                foreach (var item in user.CitiesIds) {
-
-                    UserCities userCities = new UserCities()
+                if (user.CitiesIds != null)
+                {
+                    foreach (var item in user.CitiesIds)
                     {
-                        CityId = item,
-                        UserId = newUser.Id
-                    };
 
-                    context.UserCities.Add(userCities);
+                        UserCities userCities = new UserCities()
+                        {
+                            CityId = item,
+                            UserId = newUser.Id
+                        };
+
+                        context.UserCities.Add(userCities);
+                    }
+
+                    await context.SaveChangesAsync();
                 }
-
-                await context.SaveChangesAsync();
+                return newUser.Id;
             }
         }
 
@@ -59,14 +64,6 @@ namespace CitiesUsersApi.DataProvider
                 var cityIds = await context.UserCities.Where(x => x.UserId == userId).Select(s => s.CityId).ToListAsync();
 
                 return await context.Cities.Where(x => cityIds.Contains(x.Id)).ToListAsync();
-            }
-        }
-
-        public async Task<City> GetCityById(int cityId)
-        {
-            using (var context = new CitiesUsersContext())
-            {
-                return await context.Cities.Where(q => q.Id == cityId).FirstOrDefaultAsync();
             }
         }
     }

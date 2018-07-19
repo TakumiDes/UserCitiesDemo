@@ -21,23 +21,36 @@ namespace CitiesUsersApi.Controllers
             _userCitiesProvider = userCitiesProvider;
         }
 
+        /// <summary>
+        /// Add new User.
+        /// </summary>
+        /// <param name="newUser"> New user </param>
+        /// <returns>Added user id</returns>
         [HttpPost]
         [Route("adduser")]
         public async Task<IActionResult> AddNewUser([FromBody]UserRequestDto newUser)
         {
-            await _userCitiesProvider.AddUser(newUser);
-            return Ok();
+            var userId = await _userCitiesProvider.AddUser(newUser);
+            return Ok(new { addedUserId = userId });
         }
 
+        /// <summary>
+        /// Get all users.
+        /// </summary>
+        /// <returns>Users</returns>
         [HttpGet]
         [Route("getusers")]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userCitiesProvider.GetAllUsers();
-
             return Ok(users);
         }
 
+        /// <summary>
+        /// Get cities by iser id.
+        /// </summary>
+        /// <param name="userId"> User id </param>
+        /// <returns>Cities</returns>
         [HttpGet]
         [Route("getcitiesbyuserid")]
         public async Task<IActionResult> GetCitiesByUserId([FromQuery]int userId)

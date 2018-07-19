@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using CitiesUsersApi.DataProvider;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +30,8 @@ namespace CitiesUsersApi
         {
             services.AddTransient<IUserCitiesProvider, UserCitiesProvider>();
 
-            services.AddMvc();
+            services.AddMvc(opt => opt.Filters.Add(typeof(ValidatorActionFilter)))
+               .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddSwaggerGen(c =>
             {

@@ -13,7 +13,7 @@ namespace CitiesUsersApi.DataProvider
 
         Task<IEnumerable<City>> GetCitiesByUserId(int userId);
 
-        Task AddUser(UserRequestDto user);
+        Task<int> AddUser(UserRequestDto user);
 
     }
 }
