@@ -30,6 +30,10 @@ namespace CitiesUsersApi.Controllers
         [Route("adduser")]
         public async Task<IActionResult> AddNewUser([FromBody]UserRequestDto newUser)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             var userId = await _userCitiesProvider.AddUser(newUser);
             return Ok(new { addedUserId = userId });
         }
@@ -56,6 +60,10 @@ namespace CitiesUsersApi.Controllers
         public async Task<IActionResult> GetCitiesByUserId([FromQuery]int userId)
         {
             var cities = await _userCitiesProvider.GetCitiesByUserId(userId);
+            if(cities.Count() == 0)
+            {
+                return NotFound();
+            }
 
             return Ok(cities);
         }
